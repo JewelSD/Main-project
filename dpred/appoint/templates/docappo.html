@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appointment status</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            padding: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            border: 3px solid darkblue;
+        }
+        th, td {
+            border: 1px solid darkblue;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: darkblue;
+            color: white;
+        }
+        td {
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            width: 50%;
+            padding: 50px;
+            margin: 50px auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid blue;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<center>
+    <h1>Appointments List</h1>
+    <form id="form">
+        <label for="filter">Choose a Filter</label>
+        <select name="sele" id="sele">
+            <option value="">Select an item</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+        </select>
+    </form>
+</center>
+<br>
+<br>
+<div id="table1" class="hidden" class="container">
+    <center>
+        {% if pend %}
+        <table>
+            <tr>
+                <th>Breeder Name</th>
+                <th>Dog Breed</th>
+                <th>Dog age</th>
+                <th>Phone no:</th>
+                <th>Appointment Date</th>
+                <th>Description</th>
+                <th>Time Schedule</th>
+                <th>Doctor's Description</th>
+                <th>Approve</th>
+                <th>Reject</th>
+            </tr>
+            {% for appointment in pend %}
+            <tr>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <td>{{ appointment.name }}</td>
+                    <td>{{ appointment.dog_breed }}</td>
+                    <td>{{ appointment.age }}</td>
+                    <td>{{ appointment.phone }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.desc }}</td>
+                    <td><input type="time" id="time" name="time" placeholder="Enter Prefered time"> <input type="hidden" id="a" name="a" value="{{ appointment.id }}"></td>
+                    <td><textarea id="docdesc" name="docdesc" placeholder="Your can enter The rescheduling date, Anything that you want to tell" rows="4" cols="50"></textarea> </td>
+                    <td><button style="background-color: #41B06E;color: white" type="submit" name="approve">Approve</button></td>
+                    <td><button style="background-color: red;color: white" type="submit" name="reject">Reject</button></td>
+                </form>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <h3>No appointments found !</h3>
+        {% endif %}
+    </center>
+</div>
+
+<!-- status table-->
+
+<div id="table2" class="hidden">
+    <center>
+        {% if current%}
+        <table>
+            <tr>
+                <th>Breeder Name</th>
+                <th>Dog Breed</th>
+                <th>Dog age</th>
+                <th>Phone no:</th>
+                <th>Appointed Date</th>
+                <th>Description</th>
+                <th>Time Scheduled</th>
+                <th>Status</th>
+            </tr>
+            {% for appointment in current %}
+            <tr>
+                    <td>{{ appointment.name }}</td>
+                    <td>{{ appointment.dog_breed }}</td>
+                    <td>{{ appointment.age }}</td>
+                    <td>{{ appointment.phone }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.desc }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td> {% if appointment.status == 1%}confirmed{% else %} Pending{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <h3>No Status found !</h3>
+        {% endif %}
+    </center>
+</div>
+
+<script>
+    const form = document.getElementById('form');
+    const sele = document.getElementById('sele');
+    const table1 = document.getElementById('table1');
+    const table2 = document.getElementById('table2');
+    form.addEventListener('change', () =>{
+       
+        if (sele.value === 'approved') {
+            table1.classList.add('hidden');
+            table2.classList.remove('hidden');
+        } else if (sele.value == 'pending') {
+            table1.classList.remove('hidden');
+            table2.classList.add('hidden');
+        } else {
+            table1.classList.add("hidden");
+            table2.classList.add("hidden");
+        }
+    });
+</script>
+
+</body>
+</html>
